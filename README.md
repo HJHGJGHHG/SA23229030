@@ -10,6 +10,7 @@ devtools::install_github("HJHGJGHHG/SA23229030")
 ## Intro
 This R package includes 3 functions (2 in R and 1 in C++), a Metropolis-Hasting sampler (MHS), a Robust Adaptive Metropolis (RAM) and a chopthin resampler. To test these functions, one can call
 ```R
+library(SA23229030)
 trials <- MHS(n=1e5, alpha=3, beta=2, display=TRUE)
 
 # log-pdf to sample from
