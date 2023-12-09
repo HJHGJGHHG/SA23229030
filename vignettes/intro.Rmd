@@ -1,0 +1,88 @@
+---
+title: "Introduction to this R package"
+author: "Zhenjie Liu"
+date: "2023-12-09"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to this R package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Metropolis-Hasting sampler (MHS)
+The first R function in the package is Metropolis-Hasting sampler (MHS). The Metropolis-Hasting method (MH method) is a basic MCMC algorithm, which makes tentative transfers (such as random walking) at each step. If the transfer can improve the density value $x_t$ of the state in the target distribution$\pi$, it accepts the transfer result; otherwise, it decides whether to transfer or stay unchanged with a certain probability.
+
+As a `hello world` function, we apply MHS to sample from a Gamma function. The source R code for `MHS` is as follows:
+
+```{r, fig.align='center',fig.width=6,fig.height=4}
+library(SA23229030)
+
+gammafunc <- function(x, alpha, beta){
+  if (any(x < 0)) return (0)
+  stopifnot(alpha > 0, beta > 0)
+  return((x^(alpha-1)*exp(-beta*x)))
+}
+MHS <- function(N, alpha, beta, display=TRUE){
+  x <- numeric(N)
+  # sets the initial state
+  x[1] <- rexp(1,rate = 1)
+  u <- runif(N)
+  # this defines the rest of the states
+  for (i in 2:N) {
+    xt <- x[i-1]
+    Y <- rexp(1,rate = xt)
+    # defines the acceptance rate
+    num <- gammafunc(Y,alpha,beta) * dexp(xt, rate = Y)
+    den <- gammafunc(xt,alpha,beta) * dexp(Y, rate = xt)
+    # checks if it will be accepted
+    if (u[i] <= num/den) {
+      # if accepted changed to new accepted state
+      x[i] <- Y
+    } else {
+      # if rejected the state is the same as the previous on and we try again
+      x[i] <- xt
+    }
+  }
+  if(display){
+    trials <- x[round(N/10):N]
+    hist(trials, xlab = 'X', main = "Beta distribution Metropolis-Hasting sampler",
+         probability = TRUE,freq=F,col = "papayawhip", breaks = 100)
+    curve(dgamma(x,alpha,beta),col = "tan3",lwd=2,add=TRUE)
+  }
+  return(x)
+}
+
+trials <- MHS(N=1e5, alpha=3, beta=2, display=TRUE)
+```
+
+We plot the Gamma distribution density and sampled histogram figure.
+
+## Robust Adaptive Metropolis (RAM)
+We implements the Robust Adaptive Metropolis (RAM) developed by M Vihola, arXiv 1011.4381. The paper introduces a new robust adaptive Metropolis algorithm estimating the shape of the target distribution and simultaneously coercing the acceptance rate. The adaptation rule is computationally simple adding no extra cost compared with the AM algorithm. The adaptation strategy can be seen as a multidimensional extension of the previously proposed method adapting the scale of the proposal distribution in order to attain a given acceptance rate. 
+
+Given a function 'p' that returns a value proportional to the log probability density and the number of samples, we can call `RAM(n, p)` to generate samples. We can further input `adapt` and `acc.rate` to use adaptive sampling method. Following is a example to sample from a Rosenbrock 'banana' function
+
+```{r}
+# log-pdf to sample from
+p.log <- function(x) {
+  B <- 0.03
+  -x[1]^2/200 - 1/2*(x[2]+B*x[1]^2-100*B)^2
+}
+# generate samples
+# 1. non-adaptive sampling
+samples.1 <- RAM(n=1000, p.log, init=c(0,1), scale=c(1,0.1), adapt=FALSE)
+# 2. adaptive sampling
+samples.2 <- RAM(n=1000, p.log, init=c(0,1), scale=c(1,0.1), adapt=TRUE, acc.rate=0.2)
+```
+
+## chopthin resampler
+Resampling is a standard step in particle filtering and in sequential Monte Carlo. We implements the Rcpp chopthin resampler, which keeps a bound on the ratio between the largest and the smallest weights after resampling.
+
+chopthin resampler was developed by A Gandy and F.D-H Lau in their paper 'The chopthin algorithm for resampling', arXiv 1502.07532. In contrast to standard resampling methods the algorithm does not produce a set of equally weighted particles; instead it merely enforces an upper bound on the ratio between the weights.
+
+Usage and example of the `chopthin` function is as follows
+```{r}
+chopthin(runif(10),N=20)
+```
+
+The function returns a list with two elements: new weights and indices of the ancestors of the new particles. The weights are normalised to add up to `N`.
