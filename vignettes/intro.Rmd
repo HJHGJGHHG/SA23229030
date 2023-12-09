@@ -22,13 +22,13 @@ gammafunc <- function(x, alpha, beta){
   stopifnot(alpha > 0, beta > 0)
   return((x^(alpha-1)*exp(-beta*x)))
 }
-MHS <- function(N, alpha, beta, display=TRUE){
-  x <- numeric(N)
+MHS <- function(n, alpha, beta, display=TRUE){
+  x <- numeric(n)
   # sets the initial state
   x[1] <- rexp(1,rate = 1)
-  u <- runif(N)
+  u <- runif(n)
   # this defines the rest of the states
-  for (i in 2:N) {
+  for (i in 2:n) {
     xt <- x[i-1]
     Y <- rexp(1,rate = xt)
     # defines the acceptance rate
@@ -44,7 +44,7 @@ MHS <- function(N, alpha, beta, display=TRUE){
     }
   }
   if(display){
-    trials <- x[round(N/10):N]
+    trials <- x[round(n/10):n]
     hist(trials, xlab = 'X', main = "Beta distribution Metropolis-Hasting sampler",
          probability = TRUE,freq=F,col = "papayawhip", breaks = 100)
     curve(dgamma(x,alpha,beta),col = "tan3",lwd=2,add=TRUE)
@@ -52,7 +52,7 @@ MHS <- function(N, alpha, beta, display=TRUE){
   return(x)
 }
 
-trials <- MHS(N=1e5, alpha=3, beta=2, display=TRUE)
+trials <- MHS(n=1e5, alpha=3, beta=2, display=TRUE)
 ```
 
 We plot the Gamma distribution density and sampled histogram figure.
