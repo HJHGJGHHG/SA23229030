@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Zhenjie Liu" />
+
+<meta name="date" content="2023-12-09" />
+
+<title>Introduction to this R package</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Introduction to this R package</h1>
+<h4 class="author">Zhenjie Liu</h4>
+<h4 class="date">2023-12-09</h4>
+
+
+
+<div id="metropolis-hasting-sampler-mhs" class="section level2">
+<h2>Metropolis-Hasting sampler (MHS)</h2>
+<p>The first R function in the package is Metropolis-Hasting sampler
+(MHS). The Metropolis-Hasting method (MH method) is a basic MCMC
+algorithm, which makes tentative transfers (such as random walking) at
+each step. If the transfer can improve the density value <span class="math inline">\(x_t\)</span> of the state in the target
+distribution<span class="math inline">\(\pi\)</span>, it accepts the
+transfer result; otherwise, it decides whether to transfer or stay
+unchanged with a certain probability.</p>
+<p>As a <code>hello world</code> function, we apply MHS to sample from a
+Gamma function. The source R code for <code>MHS</code> is as
+follows:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(SA23229030)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>gammafunc <span class="ot">&lt;-</span> <span class="cf">function</span>(x, alpha, beta){</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(x <span class="sc">&lt;</span> <span class="dv">0</span>)) <span class="fu">return</span> (<span class="dv">0</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>  <span class="fu">stopifnot</span>(alpha <span class="sc">&gt;</span> <span class="dv">0</span>, beta <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>  <span class="fu">return</span>((x<span class="sc">^</span>(alpha<span class="dv">-1</span>)<span class="sc">*</span><span class="fu">exp</span>(<span class="sc">-</span>beta<span class="sc">*</span>x)))</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>}</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>MHS <span class="ot">&lt;-</span> <span class="cf">function</span>(N, alpha, beta, <span class="at">display=</span><span class="cn">TRUE</span>){</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">numeric</span>(N)</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>  <span class="co"># sets the initial state</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>  x[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">rexp</span>(<span class="dv">1</span>,<span class="at">rate =</span> <span class="dv">1</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>  u <span class="ot">&lt;-</span> <span class="fu">runif</span>(N)</span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a>  <span class="co"># this defines the rest of the states</span></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>N) {</span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>    xt <span class="ot">&lt;-</span> x[i<span class="dv">-1</span>]</span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>    Y <span class="ot">&lt;-</span> <span class="fu">rexp</span>(<span class="dv">1</span>,<span class="at">rate =</span> xt)</span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>    <span class="co"># defines the acceptance rate</span></span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>    num <span class="ot">&lt;-</span> <span class="fu">gammafunc</span>(Y,alpha,beta) <span class="sc">*</span> <span class="fu">dexp</span>(xt, <span class="at">rate =</span> Y)</span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a>    den <span class="ot">&lt;-</span> <span class="fu">gammafunc</span>(xt,alpha,beta) <span class="sc">*</span> <span class="fu">dexp</span>(Y, <span class="at">rate =</span> xt)</span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a>    <span class="co"># checks if it will be accepted</span></span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a>    <span class="cf">if</span> (u[i] <span class="sc">&lt;=</span> num<span class="sc">/</span>den) {</span>
+<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a>      <span class="co"># if accepted changed to new accepted state</span></span>
+<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a>      x[i] <span class="ot">&lt;-</span> Y</span>
+<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a>      <span class="co"># if rejected the state is the same as the previous on and we try again</span></span>
+<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a>      x[i] <span class="ot">&lt;-</span> xt</span>
+<span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a>    }</span>
+<span id="cb1-28"><a href="#cb1-28" tabindex="-1"></a>  }</span>
+<span id="cb1-29"><a href="#cb1-29" tabindex="-1"></a>  <span class="cf">if</span>(display){</span>
+<span id="cb1-30"><a href="#cb1-30" tabindex="-1"></a>    trials <span class="ot">&lt;-</span> x[<span class="fu">round</span>(N<span class="sc">/</span><span class="dv">10</span>)<span class="sc">:</span>N]</span>
+<span id="cb1-31"><a href="#cb1-31" tabindex="-1"></a>    <span class="fu">hist</span>(trials, <span class="at">xlab =</span> <span class="st">&#39;X&#39;</span>, <span class="at">main =</span> <span class="st">&quot;Beta distribution Metropolis-Hasting sampler&quot;</span>,</span>
+<span id="cb1-32"><a href="#cb1-32" tabindex="-1"></a>         <span class="at">probability =</span> <span class="cn">TRUE</span>,<span class="at">freq=</span>F,<span class="at">col =</span> <span class="st">&quot;papayawhip&quot;</span>, <span class="at">breaks =</span> <span class="dv">100</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" tabindex="-1"></a>    <span class="fu">curve</span>(<span class="fu">dgamma</span>(x,alpha,beta),<span class="at">col =</span> <span class="st">&quot;tan3&quot;</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">add=</span><span class="cn">TRUE</span>)</span>
+<span id="cb1-34"><a href="#cb1-34" tabindex="-1"></a>  }</span>
+<span id="cb1-35"><a href="#cb1-35" tabindex="-1"></a>  <span class="fu">return</span>(x)</span>
+<span id="cb1-36"><a href="#cb1-36" tabindex="-1"></a>}</span>
+<span id="cb1-37"><a href="#cb1-37" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" tabindex="-1"></a>trials <span class="ot">&lt;-</span> <span class="fu">MHS</span>(<span class="at">N=</span><span class="fl">1e5</span>, <span class="at">alpha=</span><span class="dv">3</span>, <span class="at">beta=</span><span class="dv">2</span>, <span class="at">display=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
+<p>We plot the Gamma distribution density and sampled histogram
+figure.</p>
+</div>
+<div id="robust-adaptive-metropolis-ram" class="section level2">
+<h2>Robust Adaptive Metropolis (RAM)</h2>
+<p>We implements the Robust Adaptive Metropolis (RAM) developed by M
+Vihola, arXiv 1011.4381. The paper introduces a new robust adaptive
+Metropolis algorithm estimating the shape of the target distribution and
+simultaneously coercing the acceptance rate. The adaptation rule is
+computationally simple adding no extra cost compared with the AM
+algorithm. The adaptation strategy can be seen as a multidimensional
+extension of the previously proposed method adapting the scale of the
+proposal distribution in order to attain a given acceptance rate.</p>
+<p>Given a function ‘p’ that returns a value proportional to the log
+probability density and the number of samples, we can call
+<code>RAM(n, p)</code> to generate samples. We can further input
+<code>adapt</code> and <code>acc.rate</code> to use adaptive sampling
+method. Following is a example to sample from a Rosenbrock ‘banana’
+function</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># log-pdf to sample from</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>p.log <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  B <span class="ot">&lt;-</span> <span class="fl">0.03</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="sc">-</span>x[<span class="dv">1</span>]<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span><span class="dv">200</span> <span class="sc">-</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span><span class="sc">*</span>(x[<span class="dv">2</span>]<span class="sc">+</span>B<span class="sc">*</span>x[<span class="dv">1</span>]<span class="sc">^</span><span class="dv">2-100</span><span class="sc">*</span>B)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>}</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co"># generate samples</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co"># 1. non-adaptive sampling</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>samples<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">RAM</span>(<span class="at">n=</span><span class="dv">1000</span>, p.log, <span class="at">init=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), <span class="at">scale=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="fl">0.1</span>), <span class="at">adapt=</span><span class="cn">FALSE</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co"># 2. adaptive sampling</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>samples<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">RAM</span>(<span class="at">n=</span><span class="dv">1000</span>, p.log, <span class="at">init=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>), <span class="at">scale=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="fl">0.1</span>), <span class="at">adapt=</span><span class="cn">TRUE</span>, <span class="at">acc.rate=</span><span class="fl">0.2</span>)</span></code></pre></div>
+</div>
+<div id="chopthin-resampler" class="section level2">
+<h2>chopthin resampler</h2>
+<p>Resampling is a standard step in particle filtering and in sequential
+Monte Carlo. We implements the Rcpp chopthin resampler, which keeps a
+bound on the ratio between the largest and the smallest weights after
+resampling.</p>
+<p>chopthin resampler was developed by A Gandy and F.D-H Lau in their
+paper ‘The chopthin algorithm for resampling’, arXiv 1502.07532. In
+contrast to standard resampling methods the algorithm does not produce a
+set of equally weighted particles; instead it merely enforces an upper
+bound on the ratio between the weights.</p>
+<p>Usage and example of the <code>chopthin</code> function is as
+follows</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">chopthin</span>(<span class="fu">runif</span>(<span class="dv">10</span>),<span class="at">N=</span><span class="dv">20</span>)</span></code></pre></div>
+<pre><code>## $weights
+##  [1] 1.7036277 0.9354665 0.9354665 0.9354665 0.9354665 0.6417324 0.9797631
+##  [8] 0.9797631 1.7773929 0.8106455 0.8106455 0.8106455 1.0485822 1.0485822
+## [15] 1.0485822 0.7369613 1.0112510 0.9499864 0.9499864 0.9499864
+## 
+## $indices
+##  [1]  1  2  2  2  2  3  4  4  5  6  6  6  7  7  7  8  9 10 10 10</code></pre>
+<p>The function returns a list with two elements: new weights and
+indices of the ancestors of the new particles. The weights are
+normalised to add up to <code>N</code>.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
